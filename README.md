@@ -9,12 +9,24 @@ SwiftFlutter/
 │ ├── AppDelegate.swift # iOS 应用委托
 │ ├── SceneDelegate.swift # 场景委托
 │ ├── ViewController.swift # 主视图控制器
-│ └── CustomFlutterViewController.swift # 自定义 Flutter 视图控制器
+│ ├── CustomFlutterViewController.swift # 自定义 Flutter 视图控制器
+│ └── BluetoothModule/ # 蓝牙处理模块
+│   ├── Domain/ # 领域层
+│   │ ├── Entities/ # 实体对象
+│   │ ├── Interfaces/ # 接口定义 
+│   │ └── Utils/ # 工具类
+│   ├── Infrastructure/ # 基础设施层
+│   │ └── CoreBluetooth/ # CoreBluetooth封装
+│   ├── Application/ # 应用层
+│   │ └── Services/ # 服务实现
+│   └── Presentation/ # 表示层
+│     └── Publishers/ # Flutter通信
 ├── flutter_module/ # Flutter 模块
 │ ├── lib/ # Flutter 源代码
 │ │ ├── main.dart # Flutter 入口文件
 │ │ ├── router/ # 路由管理
 │ │ ├── screens/ # 页面
+│ │ ├── services/ # 服务
 │ │ └── widgets/ # 组件
 │ └── pubspec.yaml # Flutter 依赖配置
 ├── Podfile # CocoaPods 配置文件
@@ -57,22 +69,16 @@ SwiftFlutter/
 
 ### 安装步骤
 
-1. 克隆项目
-```bash
-git clone https://github.com/yourusername/SwiftFlutter.git
-cd SwiftFlutter
-```
-2. 使用安装脚本安装依赖
+1. 使用安装脚本安装依赖
 ```bash
 chmod +x setup.sh
 ./setup.sh
 ```
-3. 打开 Xcode 工作区
+2. 打开 Xcode 工作区
 ```bash
 open SwiftFlutter.xcworkspace
 ```
-
-4. 在 Xcode 中运行项目
+3. 在 Xcode 中运行项目
 
 ### 手动安装步骤
 

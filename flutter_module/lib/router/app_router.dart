@@ -5,6 +5,9 @@ import '../screens/detail_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/not_found_screen.dart';
+import '../screens/bluetooth_screen.dart';
+import '../screens/sensor_screen.dart';
+import '../screens/log_screen.dart';
 
 /// 应用路由管理类
 class AppRouter {
@@ -49,6 +52,18 @@ class AppRouter {
         name: 'profile',
         builder: (context, state) => const ProfileScreen(),
       ),
+      GoRoute(
+        path: '/sensor',
+        builder: (context, state) => const SensorScreen(),
+      ),
+      GoRoute(
+        path: '/logs',
+        builder: (context, state) => const LogScreen(),
+      ),
+      GoRoute(
+        path: '/bluetooth',
+        builder: (context, state) => const BluetoothScreen(),
+      ),
     ],
     errorBuilder: (context, state) => const NotFoundScreen(),
   );
@@ -70,9 +85,21 @@ class AppRouter {
     context.goNamed('home');
   }
 
+  static void navigateToBluetooth(BuildContext context) {
+    GoRouter.of(context).push('/bluetooth');
+  }
+
   static void pop(BuildContext context) {
     if (context.canPop()) {
       context.pop();
     }
+  }
+
+  static void navigateToSensorDemo(BuildContext context) {
+    context.go('/sensor');
+  }
+
+  static void navigateToLogDemo(BuildContext context) {
+    context.go('/logs');
   }
 }

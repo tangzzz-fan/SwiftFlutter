@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     var flutterEngine: FlutterEngine?
     private let channel = "com.example.swiftflutter/channel"
     private var messageLabel: UILabel!
+    private var loggingChannel: LoggingChannel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,11 +24,39 @@ class ViewController: UIViewController {
         // 注册所有插件
         GeneratedPluginRegistrant.register(with: self.flutterEngine!)
 
+        // 注册蓝牙插件
+        if let binaryMessenger = flutterEngine?.binaryMessenger {
+            BluetoothPlugin.register(binaryMessenger: binaryMessenger)
+        }
+
         // 设置界面
         setupUI()
 
         // 设置平台通信
         setupMethodChannel()
+
+        // 注册传感器事件处理器
+        if let binaryMessenger = flutterEngine?.binaryMessenger {
+            _ = SensorEventHandler(binaryMessenger: binaryMessenger)
+
+            // 注册日志通道
+            self.loggingChannel = LoggingChannel(binaryMessenger: binaryMessenger) {
+                [weak self] message, level in
+                // 在这里处理来自Flutter的日志消息
+                print("[Flutter日志] [\(level.rawValue)] \(message)")
+
+                // 使用捕获的strong reference到外部变量
+                let channel = self?.loggingChannel
+
+                // 示例：3秒后发送响应日志回Flutter
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    channel?.sendLog(
+                        message: "收到了您的消息: \(message)",
+                        level: .info
+                    )
+                }
+            }
+        }
     }
 
     private func setupUI() {
