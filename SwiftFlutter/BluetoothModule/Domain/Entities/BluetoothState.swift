@@ -7,5 +7,7 @@ enum BluetoothState: String {
     case unsupported = "unsupported"
     case unauthorized = "unauthorized"
     case disabled = "disabled"
+    case poweredOff = "poweredOff"
+    case poweredOn = "poweredOn"
     case ready = "ready"
 }

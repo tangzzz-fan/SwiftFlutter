@@ -10,6 +10,9 @@ class CoreBluetoothRepository: BluetoothRepositoryProtocol {
     private var packetBuffer: [UUID: Data] = [:]
     private var expectedSequenceNumbers: [UUID: Int] = [:]
 
+    /// 数据接收委托
+    weak var delegate: BluetoothDataReceptionDelegate?
+
     // MARK: - Publishers
     var statePublisher: AnyPublisher<CBManagerState, Never> {
         return manager.statePublisher
@@ -114,7 +117,14 @@ class CoreBluetoothRepository: BluetoothRepositoryProtocol {
     ) {
         guard let data = characteristic.value else { return }
 
+        // 检查是否有错误
+        if let error = error {
+            print("[蓝牙模块] 接收数据错误: \(error.localizedDescription)")
+            return
+        }
+
         if data.count > 4 && data[0] == 0x01 {
+            // 处理分包数据
             let sequenceNumber = Int(data[1])
             let totalPackets = (Int(data[2]) << 8) | Int(data[3])
             let payload = data.subdata(in: 4..<data.count)
@@ -130,6 +140,7 @@ class CoreBluetoothRepository: BluetoothRepositoryProtocol {
 
                 if expectedSequenceNumbers[peripheral.identifier] == totalPackets {
                     if let completeData = packetBuffer[peripheral.identifier] {
+                        // 使用委托通知完整数据接收
                         delegate?.didReceiveData(completeData, from: peripheral)
                     }
                     packetBuffer[peripheral.identifier] = nil
@@ -141,6 +152,7 @@ class CoreBluetoothRepository: BluetoothRepositoryProtocol {
                     fromSequence: expectedSequenceNumbers[peripheral.identifier] ?? 0)
             }
         } else {
+            // 单包数据直接通过委托发送
             delegate?.didReceiveData(data, from: peripheral)
         }
     }

@@ -163,12 +163,6 @@ extension CoreBluetoothManager: CBPeripheralDelegate {
 
     // 添加MTU协商方法
     func requestMTU(for peripheral: CBPeripheral, mtu: Int) {
-        // 在iOS中，无法直接请求MTU
-        // 但可以通过maximumWriteValueLength获取支持的MTU大小
-        let currentMTU = peripheral.maximumWriteValueLength(for: .withResponse)
-        logger.log("当前MTU大小：\(currentMTU)")
 
-        // 通知上层MTU大小，可通过委托或回调
-        delegate?.didUpdateMTU(size: currentMTU, for: peripheral)
     }
 }
