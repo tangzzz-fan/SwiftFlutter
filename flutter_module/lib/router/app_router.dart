@@ -96,10 +96,10 @@ class AppRouter {
   }
 
   static void navigateToSensorDemo(BuildContext context) {
-    context.go('/sensor');
+    context.push('/sensor');
   }
 
   static void navigateToLogDemo(BuildContext context) {
-    context.go('/logs');
+    context.push('/logs');
   }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+  static const platform = MethodChannel('com.example.swiftflutter/channel');
 
   @override
   Widget build(BuildContext context) {
@@ -11,6 +14,12 @@ class ProfileScreen extends StatelessWidget {
         title: const Text('个人中心'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(CupertinoIcons.clear),
+          onPressed: () {
+            _returnToNative();
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -23,7 +32,6 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(currentIndex: 3),
     );
   }
 
@@ -189,5 +197,15 @@ class ProfileScreen extends StatelessWidget {
       ),
       onTap: onTap,
     );
+  }
+
+  void _returnToNative() async {
+    try {
+      await platform.invokeMethod('willCloseFlutterView');
+      SystemNavigator.pop();
+    } catch (e) {
+      print('关闭页面时出错: $e');
+      SystemNavigator.pop();
+    }
   }
 }

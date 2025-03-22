@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../services/bluetooth_service.dart';
 import 'dart:async';
 
@@ -10,6 +12,7 @@ class BluetoothScreen extends StatefulWidget {
 }
 
 class _BluetoothScreenState extends State<BluetoothScreen> {
+  static const platform = MethodChannel('com.example.swiftflutter/channel');
   final BluetoothService _bluetoothService = BluetoothService();
   BluetoothState _state = BluetoothState.unknown;
   List<BluetoothDevice> _devices = [];
@@ -183,6 +186,12 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('蓝牙'),
+        leading: IconButton(
+          icon: const Icon(CupertinoIcons.clear),
+          onPressed: () {
+            _returnToNative();
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(_isScanning ? Icons.stop : Icons.search),
@@ -324,5 +333,15 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
         },
       ),
     );
+  }
+
+  void _returnToNative() async {
+    try {
+      await platform.invokeMethod('willCloseFlutterView');
+      SystemNavigator.pop();
+    } catch (e) {
+      print('关闭页面时出错: $e');
+      SystemNavigator.pop();
+    }
   }
 }

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../router/app_router.dart';
-import '../widgets/bottom_nav_bar.dart';
+import 'package:flutter/cupertino.dart';
+import 'profile_screen.dart';
+import 'settings_screen.dart';
+import 'bluetooth_screen.dart';
+import 'index_screen.dart';
+import 'chat_list_screen.dart';
 
+/// 主页面容器，包含底部标签栏和各个标签页
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -13,7 +19,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   static const platform = MethodChannel('com.example.swiftflutter/channel');
   String _message = '等待来自 iOS 的消息';
-  final List<String> _items = List.generate(20, (index) => '项目 ${index + 1}');
+  int _currentIndex = 0;
+
+  // 定义标签页
+  final List<Widget> _tabs = [
+    const IndexScreen(),
+    const ChatListScreen(),
+    const BluetoothScreen(),
+    const ProfileScreen(),
+    const SettingsScreen(),
+  ];
 
   @override
   void initState() {
@@ -53,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  /// 返回到原生页面
   void _returnToNative() async {
     try {
       await platform.invokeMethod('willCloseFlutterView');
@@ -66,153 +82,44 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('首页'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: _returnToNative,
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => AppRouter.navigateToSettings(context),
+      // 使用 IndexedStack 保持各个标签页的状态
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _tabs,
+      ),
+      // 使用 CupertinoTabBar 实现 iOS 风格的底部导航栏
+      bottomNavigationBar: CupertinoTabBar(
+        currentIndex: _currentIndex,
+        activeColor: CupertinoColors.activeBlue,
+        backgroundColor: CupertinoColors.systemBackground.resolveFrom(context),
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.home),
+            label: '首页',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.chat_bubble),
+            label: '消息',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.bluetooth),
+            label: '蓝牙',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.person),
+            label: '个人中心',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.settings),
+            label: '设置',
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.blue.withOpacity(0.3)),
-            ),
-            child: Column(
-              children: [
-                const Text(
-                  '原生通信',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _message,
-                  style: const TextStyle(fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: _sendMessageToNative,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('发送消息到 iOS'),
-                    ),
-                    ElevatedButton(
-                      onPressed: _returnToNative,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('返回 iOS'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                const Text(
-                  '项目列表',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const Spacer(),
-                TextButton.icon(
-                  onPressed: () => AppRouter.navigateToProfile(context),
-                  icon: const Icon(Icons.person),
-                  label: const Text('个人中心'),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _items.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blue.shade100,
-                    child: Text('${index + 1}'),
-                  ),
-                  title: Text(_items[index]),
-                  subtitle: Text('这是项目 ${index + 1} 的详细描述'),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () => AppRouter.navigateToDetail(
-                    context,
-                    (index + 1).toString(),
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.green.withOpacity(0.3)),
-            ),
-            child: Column(
-              children: [
-                const Text(
-                  '通道类型演示',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => AppRouter.navigateToSensorDemo(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('EventChannel\n传感器演示'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => AppRouter.navigateToLogDemo(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('BasicMessageChannel\n日志演示'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  '当前页面使用的是 MethodChannel',
-                  style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: const BottomNavBar(currentIndex: 0),
     );
   }
 }

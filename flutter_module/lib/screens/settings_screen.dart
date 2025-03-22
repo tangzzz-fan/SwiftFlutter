@@ -1,5 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../widgets/bottom_nav_bar.dart';
+import 'package:flutter/services.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -9,6 +10,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  static const platform = MethodChannel('com.example.swiftflutter/channel');
   bool _notificationsEnabled = true;
   bool _darkModeEnabled = false;
   double _textSize = 16.0;
@@ -21,6 +23,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('设置'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(CupertinoIcons.clear),
+          onPressed: () {
+            _returnToNative();
+          },
+        ),
       ),
       body: ListView(
         children: [
@@ -118,7 +126,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 24),
         ],
       ),
-      bottomNavigationBar: const BottomNavBar(currentIndex: 2),
     );
   }
 
@@ -175,5 +182,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Navigator.pop(context);
       },
     );
+  }
+
+  void _returnToNative() async {
+    try {
+      await platform.invokeMethod('willCloseFlutterView');
+      SystemNavigator.pop();
+    } catch (e) {
+      print('关闭页面时出错: $e');
+      SystemNavigator.pop();
+    }
   }
 }
