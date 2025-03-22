@@ -76,6 +76,11 @@ setup_ios() {
     info "设置 iOS 项目..."
     
     info "安装 CocoaPods 依赖..."
+
+    cd ios_module || {
+        error "iOS 模块目录不存在"
+        exit 1
+    }
     pod install
     
     if [ $? -ne 0 ]; then

@@ -2,7 +2,7 @@
 platform :ios, '14.0'
 
 # 定义 Flutter 模块的路径
-flutter_application_path = './flutter_module' # 根据实际路径修改
+flutter_application_path = '../flutter_module' # 根据实际路径修改
 # 加载 Flutter 提供的辅助脚本
 load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
 
