@@ -14,28 +14,30 @@ protocol UserServiceProtocol {
 }
 
 class UserService: UserServiceProtocol {
-    private let networking: Networking
+    private let apiClient: APIClient
 
-    init(networking: Networking) {
-        self.networking = networking
+    init(apiClient: APIClient) {
+        self.apiClient = apiClient
     }
 
     func fetchUser() -> AnyPublisher<User, Error> {
-        // 模拟网络请求
-        guard let url = URL(string: "https://api.example.com/user") else {
-            return Fail(error: NetworkError.invalidURL)
-                .eraseToAnyPublisher()
-        }
-
-        return networking.request(url: url, type: User.self)
-            .mapError { $0 as Error }
+        // 使用APIClient调用真实的用户API
+        return apiClient.request(.getUserProfile, responseType: User.self)
+            .mapError { $0.asError }
             .eraseToAnyPublisher()
     }
 
     func saveUser(_ user: User) -> AnyPublisher<Void, Error> {
-        // 模拟保存用户
-        return Just(())
-            .setFailureType(to: Error.self)
+        // 构造用户资料更新参数
+        let profile: [String: Any] = [
+            "name": user.name,
+            "email": user.email,
+            "avatarURL": user.avatarURL ?? ""
+        ]
+        
+        // 使用APIClient调用更新用户资料API
+        return apiClient.request(.updateUserProfile(profile: profile))
+            .mapError { $0.asError }
             .eraseToAnyPublisher()
     }
 }

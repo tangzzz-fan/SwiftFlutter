@@ -5,6 +5,7 @@
 //  Created by 小苹果 on 2025/3/15.
 //
 
+import Anchorage
 import UIKit
 
 class UserProfileViewController: UIViewController {
@@ -35,9 +36,8 @@ class UserProfileViewController: UIViewController {
 
         view.addSubview(label)
 
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-        ])
+        // 使用 Anchorage 设置约束
+        label.centerXAnchor == view.centerXAnchor
+        label.centerYAnchor == view.centerYAnchor
     }
 }

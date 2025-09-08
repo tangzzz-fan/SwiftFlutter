@@ -39,7 +39,9 @@ struct RetryAndAuthPlugin: PluginType {
                         // 刷新失败，清除Tokens并通知用户需要重新登录
                         AuthManager.shared.clearTokens()
                         print("Token refresh failed, user needs to login again")
-                        // 这里可以发送通知给跨平台层，通知用户需要重新登录
+                        // 发送通知给跨平台层，通知用户需要重新登录
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name("UserNeedsRelogin"), object: nil)
                     }
 
                     // 移除请求标记

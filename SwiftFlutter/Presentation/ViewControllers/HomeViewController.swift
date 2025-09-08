@@ -5,6 +5,7 @@
 //  Created by 小苹果 on 2025/3/15.
 //
 
+import Anchorage
 import SwiftUI
 import UIKit
 
@@ -31,13 +32,11 @@ class HomeViewController: UIViewController {
         view.addSubview(hostingController.view)
         hostingController.didMove(toParent: self)
 
-        NSLayoutConstraint.activate([
-            hostingController.view.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor),
-            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
+        // 使用 Anchorage 设置约束
+        hostingController.view.topAnchor == view.safeAreaLayoutGuide.topAnchor
+        hostingController.view.leadingAnchor == view.leadingAnchor
+        hostingController.view.trailingAnchor == view.trailingAnchor
+        hostingController.view.bottomAnchor == view.bottomAnchor
     }
 
     private func setupBindings() {

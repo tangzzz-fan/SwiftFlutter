@@ -15,8 +15,9 @@ protocol Networking {
 enum NetworkError: Error, LocalizedError {
     case invalidURL
     case noData
-    case decodingError
+    case decodingError(Error)
     case httpError(Int)
+    case apiError(String)
 
     var errorDescription: String? {
         switch self {
@@ -24,10 +25,12 @@ enum NetworkError: Error, LocalizedError {
             return "Invalid URL"
         case .noData:
             return "No data received"
-        case .decodingError:
-            return "Failed to decode data"
+        case .decodingError(let err):
+            return "Failed to decode data: \(err.localizedDescription)"
         case .httpError(let code):
             return "HTTP error with code: \(code)"
+        case .apiError(let message):
+            return "API error: \(message)"
         }
     }
 }

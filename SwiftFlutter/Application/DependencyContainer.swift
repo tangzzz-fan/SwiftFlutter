@@ -30,15 +30,21 @@ final class DependencyContainer {
 
     private func registerNetworking() {
         // 注册网络服务
-        container.register(Networking.self) { _ in
-            NetworkManager()
+        container.register(APIClient.self) { _ in
+            APIClient.shared
         }.inObjectScope(.container)
+        
     }
 
     private func registerServices() {
         // 注册业务服务
         container.register(UserService.self) { r in
-            UserService(networking: r.resolve(Networking.self)!)
+            UserService(apiClient: r.resolve(APIClient.self)!)
+        }.inObjectScope(.container)
+        
+        // 注册设备仓库
+        container.register(DeviceRepository.self) { r in
+            DeviceRepository(apiClient: r.resolve(APIClient.self)!)
         }.inObjectScope(.container)
     }
 

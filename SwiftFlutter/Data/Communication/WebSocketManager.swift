@@ -40,6 +40,27 @@ class WebSocketManager: NSObject, WebSocketManagerProtocol {
         webSocket?.connect()
     }
 
+    /// 使用认证令牌连接到WebSocket服务器
+    /// - Parameters:
+    ///   - token: JWT认证令牌
+    func connectWithToken(token: String) {
+        // 连接到原生WebSocket服务器（端口3002）
+        guard let url = URL(string: "ws://localhost:3002") else {
+            connectionStatusCallback?("error: Invalid URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 10
+
+        // 设置认证信息
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        webSocket = WebSocket(request: request)
+        webSocket?.delegate = self
+        webSocket?.connect()
+    }
+
     /// 断开WebSocket连接
     func disconnect() {
         webSocket?.disconnect()

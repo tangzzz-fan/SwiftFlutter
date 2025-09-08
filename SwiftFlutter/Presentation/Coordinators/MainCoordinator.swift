@@ -52,23 +52,9 @@ class MainCoordinator: Coordinator {
 
     // 创建设备tab的导航控制器
     private func createDeviceNavigationController() -> UINavigationController {
-        let deviceViewController = UIViewController()
-        deviceViewController.view.backgroundColor = .systemBackground
-        deviceViewController.title = "设备"
-
-        let label = UILabel()
-        label.text = "设备 Tab"
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        deviceViewController.view.addSubview(label)
-
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: deviceViewController.view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: deviceViewController.view.centerYAnchor),
-        ])
-
-        let navigationController = UINavigationController(rootViewController: deviceViewController)
+        let deviceCategoryViewController = DeviceCategoryViewController()
+        let navigationController = UINavigationController(
+            rootViewController: deviceCategoryViewController)
         return navigationController
     }
 
@@ -118,24 +104,9 @@ class MainCoordinator: Coordinator {
 
     // 创建性能优化tab的导航控制器
     private func createPerformanceNavigationController() -> UINavigationController {
-        let performanceViewController = UIViewController()
-        performanceViewController.view.backgroundColor = .systemBackground
-        performanceViewController.title = "性能优化"
-
-        let label = UILabel()
-        label.text = "性能优化 Tab"
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        performanceViewController.view.addSubview(label)
-
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: performanceViewController.view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: performanceViewController.view.centerYAnchor),
-        ])
-
+        let networkTestViewController = NetworkTestViewController()
         let navigationController = UINavigationController(
-            rootViewController: performanceViewController)
+            rootViewController: networkTestViewController)
         return navigationController
     }
 
