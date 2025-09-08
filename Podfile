@@ -15,6 +15,8 @@ target 'SwiftFlutter' do
   
   # Pods for SwiftFlutter
   pod 'Moya'
+  pod 'Anchorage'
+  pod 'Swinject'
 end
 
 post_install do |installer|
