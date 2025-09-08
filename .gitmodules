@@ -1,6 +1,0 @@
-[submodule "flutter_module"]
-	path = flutter_module
-	url = git@github.com:tangzzz-fan/flutter_case_module.git
-[submodule "node_module"]
-	path = node_module
-	url = git@github.com:tangzzz-fan/sf_node_module.git

@@ -6,7 +6,6 @@
 //
 
 import Flutter
-import FlutterPluginRegistrant
 import UIKit
 
 class ViewController: UIViewController {
@@ -21,9 +20,7 @@ class ViewController: UIViewController {
         // 创建 Flutter 引擎实例
         self.flutterEngine = FlutterEngine(name: "my_flutter_engine")
         self.flutterEngine?.run()
-        // 注册所有插件
-        GeneratedPluginRegistrant.register(with: self.flutterEngine!)
-
+    
         // 注册蓝牙插件
         if let binaryMessenger = flutterEngine?.binaryMessenger {
             BluetoothPlugin.register(binaryMessenger: binaryMessenger)

@@ -1,8 +1,8 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '14.0'
+platform :ios, '16.0'
 
 # 定义 Flutter 模块的路径（修正路径）
-flutter_application_path = '../../flutter_module' # 根据实际路径修改
+flutter_application_path = '../flutter_module' # 根据实际路径修改
 # 加载 Flutter 提供的辅助脚本
 load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
 
@@ -24,7 +24,7 @@ post_install do |installer|
   # 确保 iOS 项目的最低部署版本与 Podfile 中定义的一致
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
     end
   end
 end

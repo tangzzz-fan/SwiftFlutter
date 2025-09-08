@@ -109,17 +109,13 @@ class CustomFlutterViewController: FlutterViewController {
 
     // 通知 Flutter 页面即将关闭
     func notifyFlutterWillClose() {
-        if let binaryMessenger = engine?.binaryMessenger {
-            let channel = FlutterMethodChannel(name: channelName, binaryMessenger: binaryMessenger)
-            channel.invokeMethod("willCloseFromNative", arguments: nil)
-        }
+        let channel = FlutterMethodChannel(name: channelName, binaryMessenger: self.engine.binaryMessenger)
+        channel.invokeMethod("willCloseFromNative", arguments: nil)
     }
 
     // 发送消息到 Flutter
     func sendMessage(to method: String, arguments: Any?, completion: ((Any?) -> Void)? = nil) {
-        if let binaryMessenger = engine?.binaryMessenger {
-            let channel = FlutterMethodChannel(name: channelName, binaryMessenger: binaryMessenger)
-            channel.invokeMethod(method, arguments: arguments, result: completion)
-        }
+        let channel = FlutterMethodChannel(name: channelName, binaryMessenger: self.engine.binaryMessenger)
+        channel.invokeMethod(method, arguments: arguments, result: completion)
     }
 }
