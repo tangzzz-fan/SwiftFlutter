@@ -20,17 +20,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window = UIWindow(windowScene: windowScene)
 
-        // 创建 Flutter 引擎实例
-        let flutterEngine = FlutterEngine(name: "my_flutter_engine")
-        flutterEngine.run()
+        // 使用依赖注入容器获取主协调器
+        let mainCoordinator = DependencyContainer.shared.resolve(MainCoordinator.self)
+        mainCoordinator?.start()
 
-        // 创建 FlutterViewController
-        let flutterViewController = FlutterViewController(
-            engine: flutterEngine, nibName: nil, bundle: nil)
-        flutterViewController.modalPresentationStyle = .fullScreen
-
-        window?.rootViewController = flutterViewController
-        window?.makeKeyAndVisible()
+        // 获取由MainCoordinator创建的tabBarController
+        if let tabBarController = mainCoordinator?.tabBarController {
+            window?.rootViewController = tabBarController
+            window?.makeKeyAndVisible()
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
