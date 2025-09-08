@@ -10,6 +10,7 @@ import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    private var smartHomeBridge: SmartHomeNativeBridge?
 
     func application(
         _ application: UIApplication,
@@ -23,6 +24,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         engine.run(withEntrypoint: nil)
         // 保存引擎引用供后续使用
         FlutterEngineManager.shared.addEngine(forKey: "main", engine: engine)
+
+        // 初始化智能家居原生桥接接口
+        smartHomeBridge = SmartHomeNativeBridge()
+        smartHomeBridge?.register(with: engine)
 
         return true
     }

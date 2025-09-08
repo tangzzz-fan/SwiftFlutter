@@ -17,6 +17,11 @@ target 'SwiftFlutter' do
   pod 'Moya'
   pod 'Anchorage'
   pod 'Swinject'
+  # 添加基础设施层所需的依赖
+  pod 'CocoaMQTT'
+  pod 'Starscream'
+  # 可选：添加KeychainAccess用于简化Keychain操作
+  pod 'KeychainAccess'
 end
 
 post_install do |installer|
