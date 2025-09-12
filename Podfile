@@ -1,37 +1,62 @@
-# Uncomment the next line to define a global platform for your project
-platform :ios, '16.0'
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
-# 定义 Flutter 模块的路径（修正路径）
-flutter_application_path = '../flutter_module' # 根据实际路径修改
-# 加载 Flutter 提供的辅助脚本
+platform :ios, '16.0'
+min_ios = '16.0'
+prepare_react_native_project!
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+else
+  use_frameworks!
+end
+
+# flutter
+flutter_application_path = '../../flutter_module'
 load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
 
+# 全局取 config
+config = use_native_modules!
+
 target 'SwiftFlutter' do
-  # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  # 集成 Flutter 模块
-  install_all_flutter_pods(flutter_application_path)
+  use_react_native!(
+      :path => config[:reactNativePath],
+      :app_path => "#{Pod::Config.instance.installation_root}/.."
+    )
   
-  # Pods for SwiftFlutter
+  # Flutter
+  install_all_flutter_pods(flutter_application_path)
+  use_modular_headers!
+  
+  # 业务库
   pod 'Moya'
   pod 'Anchorage'
   pod 'Swinject'
-  # 添加基础设施层所需的依赖
   pod 'CocoaMQTT'
   pod 'Starscream'
-  # 可选：添加KeychainAccess用于简化Keychain操作
   pod 'KeychainAccess'
 end
 
 post_install do |installer|
-  # Flutter 提供的 post_install 配置
   flutter_post_install(installer) if defined?(flutter_post_install)
   
-  # 确保 iOS 项目的最低部署版本与 Podfile 中定义的一致
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = min_ios
     end
   end
+  
+  # React Native post install configuration
+  react_native_post_install(
+    installer,
+    config[:reactNativePath],
+    :mac_catalyst_enabled => false,
+  )
 end
