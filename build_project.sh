@@ -4,7 +4,7 @@
 echo "开始构建iOS项目..."
 
 # 进入iOS目录
-cd /Users/apple/Developments/FlutterPluginDemo/ios_module
+cd /Users/apple/Developments/FlutterPluginDemo/swiftui_module/ios
 
 # 检查工作区文件是否存在
 if [ ! -d "SwiftFlutter.xcworkspace" ]; then

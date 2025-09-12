@@ -26,129 +26,60 @@ class MainCoordinator: Coordinator {
     private func setupTabBar() {
         guard let tabBarController = self.tabBarController else { return }
 
-        // 创建各个tab的导航控制器
-        let deviceNavController = createDeviceNavigationController()
-        let wmallNavController = createWMallNavigationController()
-        let omallNavController = createOMallNavigationController()
-        let performanceNavController = createPerformanceNavigationController()
-        let profileNavController = createProfileNavigationController()
+        // 创建各个技术栈tab的导航控制器
+        let nativeTabNavController = createNativeTabNavController()
+        let reactNativeTabNavController = createReactNativeTabNavController()
+        let hybridTabNavController = createHybridTabNavController()
+        let flutterTabNavController = createFlutterTabNavController()
+        let performanceTabNavController = createPerformanceTabNavController()
 
         // 设置标签栏项
-        deviceNavController.tabBarItem = UITabBarItem(title: "设备", image: nil, tag: 0)
-        wmallNavController.tabBarItem = UITabBarItem(title: "WMall", image: nil, tag: 1)
-        omallNavController.tabBarItem = UITabBarItem(title: "OMall", image: nil, tag: 2)
-        performanceNavController.tabBarItem = UITabBarItem(title: "性能优化", image: nil, tag: 3)
-        profileNavController.tabBarItem = UITabBarItem(title: "个人中心", image: nil, tag: 4)
+        nativeTabNavController.tabBarItem = UITabBarItem(title: "Native", image: UIImage(systemName: "swift"), tag: 0)
+        reactNativeTabNavController.tabBarItem = UITabBarItem(title: "React Native", image: UIImage(systemName: "atom"), tag: 1)
+        hybridTabNavController.tabBarItem = UITabBarItem(title: "Hybrid", image: UIImage(systemName: "globe"), tag: 2)
+        flutterTabNavController.tabBarItem = UITabBarItem(title: "Flutter", image: UIImage(systemName: "bird"), tag: 3)
+        performanceTabNavController.tabBarItem = UITabBarItem(title: "Performance", image: UIImage(systemName: "speedometer"), tag: 4)
 
         // 设置标签栏控制器的视图控制器数组
         tabBarController.viewControllers = [
-            deviceNavController,
-            wmallNavController,
-            omallNavController,
-            performanceNavController,
-            profileNavController,
+            nativeTabNavController,
+            reactNativeTabNavController,
+            hybridTabNavController,
+            flutterTabNavController,
+            performanceTabNavController
         ]
     }
 
-    // 创建设备tab的导航控制器
-    private func createDeviceNavigationController() -> UINavigationController {
-        let deviceCategoryViewController = DeviceCategoryViewController()
-        let navigationController = UINavigationController(
-            rootViewController: deviceCategoryViewController)
-        return navigationController
+    // MARK: - Tab Creation Methods
+    
+    private func createNativeTabNavController() -> UINavigationController {
+        let nativeViewController = DemoListViewController(demoType: .native)
+        let navController = UINavigationController(rootViewController: nativeViewController)
+        return navController
     }
-
-    // 创建WMalltab的导航控制器
-    private func createWMallNavigationController() -> UINavigationController {
-        let wmallViewController = UIViewController()
-        wmallViewController.view.backgroundColor = .systemBackground
-        wmallViewController.title = "WMall"
-
-        let label = UILabel()
-        label.text = "WMall Tab"
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        wmallViewController.view.addSubview(label)
-
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: wmallViewController.view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: wmallViewController.view.centerYAnchor),
-        ])
-
-        let navigationController = UINavigationController(rootViewController: wmallViewController)
-        return navigationController
+    
+    private func createReactNativeTabNavController() -> UINavigationController {
+        let reactNativeViewController = DemoListViewController(demoType: .reactNative)
+        let navController = UINavigationController(rootViewController: reactNativeViewController)
+        return navController
     }
-
-    // 创建OMalltab的导航控制器
-    private func createOMallNavigationController() -> UINavigationController {
-        let omallViewController = UIViewController()
-        omallViewController.view.backgroundColor = .systemBackground
-        omallViewController.title = "OMall"
-
-        let label = UILabel()
-        label.text = "OMall Tab"
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        omallViewController.view.addSubview(label)
-
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: omallViewController.view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: omallViewController.view.centerYAnchor),
-        ])
-
-        let navigationController = UINavigationController(rootViewController: omallViewController)
-        return navigationController
+    
+    private func createHybridTabNavController() -> UINavigationController {
+        let hybridViewController = DemoListViewController(demoType: .hybrid)
+        let navController = UINavigationController(rootViewController: hybridViewController)
+        return navController
     }
-
-    // 创建性能优化tab的导航控制器
-    private func createPerformanceNavigationController() -> UINavigationController {
-        let networkTestViewController = NetworkTestViewController()
-        let navigationController = UINavigationController(
-            rootViewController: networkTestViewController)
-        return navigationController
+    
+    private func createFlutterTabNavController() -> UINavigationController {
+        let flutterViewController = DemoListViewController(demoType: .flutter)
+        let navController = UINavigationController(rootViewController: flutterViewController)
+        return navController
     }
-
-    // 创建个人中心tab的导航控制器
-    private func createProfileNavigationController() -> UINavigationController {
-        // 个人中心使用Flutter模块
-        guard
-            let flutterEngine = DependencyContainer.shared.resolve(FlutterEngineManager.self)?
-                .getEngine(forKey: "main")
-        else {
-            print("Flutter engine not available")
-
-            // 如果Flutter引擎不可用，创建一个简单的原生视图控制器
-            let profileViewController = UIViewController()
-            profileViewController.view.backgroundColor = .systemBackground
-            profileViewController.title = "个人中心"
-
-            let label = UILabel()
-            label.text = "个人中心 Tab (Flutter引擎不可用)"
-            label.textAlignment = .center
-            label.translatesAutoresizingMaskIntoConstraints = false
-
-            profileViewController.view.addSubview(label)
-
-            NSLayoutConstraint.activate([
-                label.centerXAnchor.constraint(equalTo: profileViewController.view.centerXAnchor),
-                label.centerYAnchor.constraint(equalTo: profileViewController.view.centerYAnchor),
-            ])
-
-            let navigationController = UINavigationController(
-                rootViewController: profileViewController)
-            return navigationController
-        }
-
-        let flutterViewController = CustomFlutterViewController(
-            engine: flutterEngine, nibName: nil, bundle: nil)
-        flutterViewController.title = "个人中心"
-
-        let navigationController = UINavigationController(rootViewController: flutterViewController)
-        // 默认隐藏导航栏
-        navigationController.setNavigationBarHidden(true, animated: false)
-        return navigationController
+    
+    private func createPerformanceTabNavController() -> UINavigationController {
+        let performanceViewController = PerformanceTestViewController()
+        let navController = UINavigationController(rootViewController: performanceViewController)
+        return navController
     }
 
     func navigate(to route: String, with data: Any?) {

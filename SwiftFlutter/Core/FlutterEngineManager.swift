@@ -50,19 +50,13 @@ class FlutterEngineManager {
             return engineInfo.engine
         }
 
-        // 创建新的引擎实例
-        let engine = engineGroup.makeEngine(with: FlutterEngineGroupOptions())
+        // 创建新引擎
+        let engine = engineGroup.makeEngine(withEntrypoint: nil, libraryURI: nil)
+        engine.run()
 
-        engine.run(withEntrypoint: nil)
+        // 添加到管理器
+        addEngine(forKey: key, engine: engine)
 
-        let engineInfo = EngineInfo(
-            key: key,
-            engine: engine,
-            state: .active,
-            createdAt: Date()
-        )
-
-        engines[key] = engineInfo
         return engine
     }
 
