@@ -147,10 +147,6 @@ class DemoTableViewCell: UITableViewCell {
                 iconImageView.image = UIImage(systemName: "swift")
                 iconImageView.tintColor = .systemOrange
                 iconImageView.backgroundColor = .systemOrange.withAlphaComponent(0.1)
-            case .reactNative:
-                iconImageView.image = UIImage(systemName: "atom")
-                iconImageView.tintColor = .systemBlue
-                iconImageView.backgroundColor = .systemBlue.withAlphaComponent(0.1)
             case .hybrid:
                 iconImageView.image = UIImage(systemName: "link")
                 iconImageView.tintColor = .systemPurple

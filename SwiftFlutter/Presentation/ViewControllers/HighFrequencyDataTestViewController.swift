@@ -60,11 +60,6 @@ class HighFrequencyDataTestViewController: UIViewController {
         return view
     }()
     
-    private lazy var reactNativeResultView: TestResultView = {
-        let view = TestResultView(title: "React Native 测试结果")
-        return view
-    }()
-    
     private lazy var comparisonView: UIView = {
         let view = UIView()
         view.backgroundColor = .systemBackground
@@ -99,10 +94,8 @@ class HighFrequencyDataTestViewController: UIViewController {
     private var isTestRunning = false
     private var testTimer: Timer?
     private var flutterDataHandler: HighFrequencyDataStreamHandler?
-    private var reactNativeDataHandler: ReactNativeDataHandler?
     
     private var flutterStats = TestStats()
-    private var reactNativeStats = TestStats()
     
     private var currentFrequency: TimeInterval {
         switch frequencySegmentedControl.selectedSegmentIndex {
@@ -140,7 +133,6 @@ class HighFrequencyDataTestViewController: UIViewController {
         controlPanelView.addSubview(startStopButton)
         
         contentView.addSubview(flutterResultView)
-        contentView.addSubview(reactNativeResultView)
         contentView.addSubview(comparisonView)
         
         comparisonView.addSubview(comparisonLabel)
@@ -172,12 +164,8 @@ class HighFrequencyDataTestViewController: UIViewController {
         flutterResultView.topAnchor == controlPanelView.bottomAnchor + 16
         flutterResultView.leadingAnchor == contentView.leadingAnchor + 16
         flutterResultView.trailingAnchor == contentView.trailingAnchor - 16
-        
-        reactNativeResultView.topAnchor == flutterResultView.bottomAnchor + 16
-        reactNativeResultView.leadingAnchor == contentView.leadingAnchor + 16
-        reactNativeResultView.trailingAnchor == contentView.trailingAnchor - 16
-        
-        comparisonView.topAnchor == reactNativeResultView.bottomAnchor + 16
+
+        comparisonView.topAnchor == flutterResultView.bottomAnchor + 16
         comparisonView.leadingAnchor == contentView.leadingAnchor + 16
         comparisonView.trailingAnchor == contentView.trailingAnchor - 16
         comparisonView.bottomAnchor == contentView.bottomAnchor - 16
@@ -202,9 +190,6 @@ class HighFrequencyDataTestViewController: UIViewController {
             )
             eventChannel.setStreamHandler(flutterDataHandler)
         }
-        
-        // 设置React Native数据处理器
-        reactNativeDataHandler = ReactNativeDataHandler()
     }
     
     // MARK: - Actions
@@ -232,11 +217,9 @@ class HighFrequencyDataTestViewController: UIViewController {
         
         // 重置统计数据
         flutterStats.reset()
-        reactNativeStats.reset()
         
         // 更新UI
         flutterResultView.updateStats(flutterStats)
-        reactNativeResultView.updateStats(reactNativeStats)
         comparisonResultLabel.text = "测试进行中..."
         
         // 启动定时器
@@ -263,7 +246,7 @@ class HighFrequencyDataTestViewController: UIViewController {
         let testData: [String: Any] = [
             "timestamp": timestamp,
             "value": Double.random(in: 0...100),
-            "sequence": flutterStats.messagesSent + reactNativeStats.messagesSent
+            "sequence": flutterStats.messagesSent
         ]
         
         // 发送到Flutter
@@ -277,34 +260,19 @@ class HighFrequencyDataTestViewController: UIViewController {
                 self?.flutterResultView.updateStats(self?.flutterStats ?? TestStats())
             }
         }
-        
-        // 发送到React Native
-        reactNativeDataHandler?.sendData(testData) { [weak self] success, latency in
-            DispatchQueue.main.async {
-                if success {
-                    self?.reactNativeStats.recordSuccess(latency: latency)
-                } else {
-                    self?.reactNativeStats.recordFailure()
-                }
-                self?.reactNativeResultView.updateStats(self?.reactNativeStats ?? TestStats())
-            }
-        }
+
     }
     
     private func updateComparisonResult() {
         let flutterAvgLatency = flutterStats.averageLatency
-        let reactNativeAvgLatency = reactNativeStats.averageLatency
         
         let flutterSuccessRate = flutterStats.successRate
-        let reactNativeSuccessRate = reactNativeStats.successRate
         
         var result = "测试完成\n\n"
         result += "平均延迟对比:\n"
         result += "Flutter: \(String(format: "%.2f", flutterAvgLatency))ms\n"
-        result += "React Native: \(String(format: "%.2f", reactNativeAvgLatency))ms\n\n"
         result += "成功率对比:\n"
         result += "Flutter: \(String(format: "%.1f", flutterSuccessRate))%\n"
-        result += "React Native: \(String(format: "%.1f", reactNativeSuccessRate))%"
         
         comparisonResultLabel.text = result
     }
@@ -345,21 +313,5 @@ struct TestStats {
         totalLatency = 0
         minLatency = Double.greatestFiniteMagnitude
         maxLatency = 0
-    }
-}
-
-// MARK: - Data Handlers
-
-class ReactNativeDataHandler {
-    func sendData(_ data: [String: Any], completion: @escaping (Bool, Double) -> Void) {
-        let startTime = CFAbsoluteTimeGetCurrent()
-        
-        // 模拟React Native数据发送
-        DispatchQueue.global().asyncAfter(deadline: .now() + Double.random(in: 0.001...0.01)) {
-            let endTime = CFAbsoluteTimeGetCurrent()
-            let latency = (endTime - startTime) * 1000 // 转换为毫秒
-            let success = Double.random(in: 0...1) > 0.05 // 95%成功率
-            completion(success, latency)
-        }
     }
 }

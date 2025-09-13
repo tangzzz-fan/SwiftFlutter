@@ -28,7 +28,7 @@ class PerformanceTestViewController: UIViewController {
     private let testItems: [PerformanceTestItem] = [
         PerformanceTestItem(
             title: "高频数据流传输测试",
-            description: "测试Flutter和React Native的高频数据传输性能",
+            description: "测试Flutter的高频数据传输性能",
             testType: .highFrequencyDataStream,
             isAvailable: true
         ),

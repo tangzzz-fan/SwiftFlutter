@@ -62,8 +62,6 @@ class DemoListViewController: UIViewController {
         switch demoType {
         case .native:
             title = "原生功能"
-        case .reactNative:
-            title = "React Native"
         case .hybrid:
             title = "混合开发"
         case .flutter:
@@ -91,8 +89,6 @@ class DemoListViewController: UIViewController {
         switch demoType {
         case .native:
             demos = NativeDemoProvider.getDefaultDemos()
-        case .reactNative:
-            demos = ReactNativeDemoProvider.getDefaultDemos()
         case .hybrid:
             demos = HybridDemoProvider.getDefaultDemos()
         case .flutter:
@@ -139,11 +135,7 @@ class DemoListViewController: UIViewController {
         case "WebSocketTestViewController":
             let vc = WebSocketTestViewController()
             navigationController?.pushViewController(vc, animated: true)
-            
-        // React Native控制器
-        case "ReactNativeViewController":
-            navigateToReactNative(demo: demo)
-            
+
         // Flutter控制器
         case "CustomFlutterViewController":
             navigateToFlutter(demo: demo)
@@ -151,7 +143,6 @@ class DemoListViewController: UIViewController {
         // 混合控制器
         case "HybridMallViewController",
              "HybridPaymentViewController",
-             "NativeRNBridgeViewController",
              "NativeFlutterBridgeViewController":
             navigateToHybrid(demo: demo)
             
@@ -159,11 +150,6 @@ class DemoListViewController: UIViewController {
             // 其他原生控制器的通用处理
             navigateToGenericNative(controllerName: controllerName, demo: demo)
         }
-    }
-    
-    private func navigateToReactNative(demo: DemoItem) {
-        // TODO: 实现React Native导航
-        showAlert(title: "React Native", message: "\(demo.title) 功能正在开发中")
     }
     
     private func navigateToFlutter(demo: DemoItem) {

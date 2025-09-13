@@ -16,7 +16,6 @@ class BridgeCoordinator {
     // MARK: - Properties
     
     private var flutterBridge: FlutterBridge?
-    private var reactNativeBridge: ReactNativeBridge?
     private var hybridBridge: HybridBridge?
     
     // MARK: - Initialization
@@ -32,9 +31,6 @@ class BridgeCoordinator {
         if let flutterEngine = DependencyContainer.shared.resolve(FlutterEngineManager.self)?.getEngine(forKey: "main") {
             flutterBridge = FlutterBridge(engine: flutterEngine)
         }
-        
-        // 初始化React Native Bridge
-        reactNativeBridge = ReactNativeBridge()
         
         // 初始化Hybrid Bridge
         hybridBridge = HybridBridge()
@@ -55,23 +51,6 @@ class BridgeCoordinator {
     /// 监听Flutter事件
     func listenToFlutterEvents(channel: String, handler: @escaping (Any?) -> Void) {
         flutterBridge?.listenToEvents(channel: channel, handler: handler)
-    }
-    
-    // MARK: - React Native Communication
-    
-    /// 调用React Native方法
-    func callReactNativeMethod(_ method: String, arguments: [String: Any]? = nil, completion: @escaping (Result<Any?, Error>) -> Void) {
-        guard let bridge = reactNativeBridge else {
-            completion(.failure(BridgeError.bridgeNotAvailable("React Native")))
-            return
-        }
-        
-        bridge.callMethod(method, arguments: arguments, completion: completion)
-    }
-    
-    /// 监听React Native事件
-    func listenToReactNativeEvents(eventName: String, handler: @escaping (Any?) -> Void) {
-        reactNativeBridge?.listenToEvents(eventName: eventName, handler: handler)
     }
     
     // MARK: - Hybrid Communication
@@ -111,16 +90,6 @@ class BridgeCoordinator {
                 }
             }
             
-        case .reactNative:
-            callReactNativeMethod("receiveSharedData", arguments: ["data": data, "source": source.rawValue]) { result in
-                switch result {
-                case .success:
-                    completion(.success(()))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-            
         case .hybrid:
             callHybridMethod("receiveSharedData", arguments: ["data": data, "source": source.rawValue]) { result in
                 switch result {
@@ -142,8 +111,6 @@ class BridgeCoordinator {
             return true
         case .flutter:
             return flutterBridge != nil
-        case .reactNative:
-            return reactNativeBridge != nil
         case .hybrid:
             return hybridBridge != nil
         }
@@ -154,7 +121,6 @@ class BridgeCoordinator {
         return [
             "native": true,
             "flutter": flutterBridge != nil,
-            "reactNative": reactNativeBridge != nil,
             "hybrid": hybridBridge != nil
         ]
     }
@@ -166,7 +132,6 @@ class BridgeCoordinator {
 enum TechStack: String, CaseIterable {
     case native = "native"
     case flutter = "flutter"
-    case reactNative = "reactNative"
     case hybrid = "hybrid"
 }
 
