@@ -32,9 +32,9 @@ class UserService: UserServiceProtocol {
         let profile: [String: Any] = [
             "name": user.name,
             "email": user.email,
-            "avatarURL": user.avatarURL ?? ""
+            "avatarURL": user.avatarURL ?? "",
         ]
-        
+
         // 使用APIClient调用更新用户资料API
         return apiClient.request(.updateUserProfile(profile: profile))
             .mapError { $0.asError }

@@ -20,4 +20,3 @@ struct User: Codable {
         case avatarURL
     }
 }
-
