@@ -151,6 +151,10 @@ class DemoTableViewCell: UITableViewCell {
                 iconImageView.image = UIImage(systemName: "link")
                 iconImageView.tintColor = .systemPurple
                 iconImageView.backgroundColor = .systemPurple.withAlphaComponent(0.1)
+            case .reactNative:
+                iconImageView.image = UIImage(systemName: "atom")
+                iconImageView.tintColor = .systemBlue
+                iconImageView.backgroundColor = .systemBlue.withAlphaComponent(0.1)
             case .flutter:
                 iconImageView.image = UIImage(systemName: "bird")
                 iconImageView.tintColor = .systemTeal

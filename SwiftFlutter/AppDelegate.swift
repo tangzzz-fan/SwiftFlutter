@@ -7,14 +7,19 @@
 
 import Flutter
 import UIKit
+import React
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    var window: UIWindow?
 
-    func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+        
+        // 初始化 React Native 桥接
+        ReactNativeBridgeManager.shared.initializeBridge(launchOptions: launchOptions)
+        
         // 初始化Flutter引擎组
         let flutterEngineGroup = FlutterEngineGroup(name: "io.flutter", project: nil)
 

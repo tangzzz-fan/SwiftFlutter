@@ -62,6 +62,8 @@ class DemoListViewController: UIViewController {
         switch demoType {
         case .native:
             title = "原生功能"
+        case .reactNative:
+            title = "React Native"
         case .hybrid:
             title = "混合开发"
         case .flutter:
@@ -91,6 +93,8 @@ class DemoListViewController: UIViewController {
             demos = NativeDemoProvider.getDefaultDemos()
         case .hybrid:
             demos = HybridDemoProvider.getDefaultDemos()
+        case .reactNative:
+            demos = ReactNativeDemoProvider.getDefaultDemos()
         case .flutter:
             demos = FlutterDemoProvider.getDefaultDemos()
         }
@@ -145,11 +149,33 @@ class DemoListViewController: UIViewController {
              "HybridPaymentViewController",
              "NativeFlutterBridgeViewController":
             navigateToHybrid(demo: demo)
-            
+        
+        // React Native控制器
+        case "ReactNativeViewController":
+            navigateToReactNative(demo: demo)
+
         default:
             // 其他原生控制器的通用处理
             navigateToGenericNative(controllerName: controllerName, demo: demo)
         }
+    }
+    
+    private func navigateToReactNative(demo: DemoItem) {
+        // 确保 React Native 桥接已初始化
+        ReactNativeBridgeManager.shared.initializeBridge()
+        
+        // 创建 React Native 视图控制器
+        let reactNativeVC = ReactNativeViewController(
+            moduleName: "SmartHomeApp",
+            initialProps: [
+                "demoId": demo.id,
+                "demoTitle": demo.title,
+                "demoDescription": demo.description
+            ]
+        )
+        
+        reactNativeVC.title = demo.title
+        navigationController?.pushViewController(reactNativeVC, animated: true)
     }
     
     private func navigateToFlutter(demo: DemoItem) {

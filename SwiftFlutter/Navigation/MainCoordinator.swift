@@ -28,6 +28,7 @@ class MainCoordinator: Coordinator {
 
         // 创建各个技术栈tab的导航控制器
         let nativeTabNavController = createNativeTabNavController()
+        let reactNativeTabNavController = createReactNativeTabNavController()
         let hybridTabNavController = createHybridTabNavController()
         let flutterTabNavController = createFlutterTabNavController()
         let performanceTabNavController = createPerformanceTabNavController()
@@ -36,6 +37,7 @@ class MainCoordinator: Coordinator {
         nativeTabNavController.tabBarItem = UITabBarItem(title: "Native", image: UIImage(systemName: "swift"), tag: 0)
         hybridTabNavController.tabBarItem = UITabBarItem(title: "Hybrid", image: UIImage(systemName: "globe"), tag: 2)
         flutterTabNavController.tabBarItem = UITabBarItem(title: "Flutter", image: UIImage(systemName: "bird"), tag: 3)
+        reactNativeTabNavController.tabBarItem = UITabBarItem(title: "React Native", image: UIImage(systemName: "atom"), tag: 1)
         performanceTabNavController.tabBarItem = UITabBarItem(title: "Performance", image: UIImage(systemName: "speedometer"), tag: 4)
 
         // 设置标签栏控制器的视图控制器数组
@@ -43,6 +45,7 @@ class MainCoordinator: Coordinator {
             nativeTabNavController,
             hybridTabNavController,
             flutterTabNavController,
+            reactNativeTabNavController,
             performanceTabNavController
         ]
     }
@@ -64,6 +67,12 @@ class MainCoordinator: Coordinator {
     private func createFlutterTabNavController() -> UINavigationController {
         let flutterViewController = DemoListViewController(demoType: .flutter)
         let navController = UINavigationController(rootViewController: flutterViewController)
+        return navController
+    }
+
+    private func createReactNativeTabNavController() -> UINavigationController {
+        let reactNativeViewController = DemoListViewController(demoType: .reactNative)
+        let navController = UINavigationController(rootViewController: reactNativeViewController)
         return navController
     }
     

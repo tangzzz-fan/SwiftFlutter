@@ -12,6 +12,7 @@ enum DemoType: String, CaseIterable {
     case native = "native"
     case hybrid = "hybrid"
     case flutter = "flutter"
+    case reactNative = "reactNative"
 }
 
 /// Demo项目数据模型
@@ -136,6 +137,46 @@ struct HybridDemoProvider {
                 iconName: "arrow.up.arrow.down",
                 demoType: .hybrid,
                 targetController: "NativeFlutterBridgeViewController"
+            )
+        ]
+    }
+}
+
+/// React Native Demo提供者
+struct ReactNativeDemoProvider {
+    static func getDefaultDemos() -> [DemoItem] {
+        return [
+            DemoItem(
+                id: "smart_home_devices",
+                title: "智能家居设备",
+                description: "设备控制面板和状态监控",
+                iconName: "house.fill",
+                demoType: .reactNative,
+                targetController: "ReactNativeViewController"
+            ),
+            DemoItem(
+                id: "device_categories",
+                title: "设备分类管理",
+                description: "按类型管理智能设备",
+                iconName: "square.grid.2x2.fill",
+                demoType: .reactNative,
+                targetController: "ReactNativeViewController"
+            ),
+            DemoItem(
+                id: "real_time_monitor",
+                title: "实时状态监控",
+                description: "设备状态实时更新显示",
+                iconName: "chart.line.uptrend.xyaxis",
+                demoType: .reactNative,
+                targetController: "ReactNativeViewController"
+            ),
+            DemoItem(
+                id: "plugin_loading",
+                title: "插件化加载",
+                description: "动态加载设备控制插件",
+                iconName: "puzzlepiece.extension.fill",
+                demoType: .reactNative,
+                targetController: "ReactNativeViewController"
             )
         ]
     }

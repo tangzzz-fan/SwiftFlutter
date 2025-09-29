@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		85539362D452C76E5E2F3BE6 /* Pods_SwiftFlutter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEEE39EED5A58E84714D091C /* Pods_SwiftFlutter.framework */; };
 		BEBC89923F4010EE3E349556 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 91B4FD4CB854EA3C5DE4005F /* PrivacyInfo.xcprivacy */; };
-		C87F0B2557C456B8C6BA06F9 /* libPods-SwiftFlutter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65862FFB19638571A3218802 /* libPods-SwiftFlutter.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		18C7E8B92D85D825004B0ACB /* SwiftFlutter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftFlutter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BF67ED3EEF6E6127D1987F0 /* Pods-SwiftFlutter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftFlutter.debug.xcconfig"; path = "Target Support Files/Pods-SwiftFlutter/Pods-SwiftFlutter.debug.xcconfig"; sourceTree = "<group>"; };
 		431760F49CBE384568AA730A /* Pods-SwiftFlutter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftFlutter.release.xcconfig"; path = "Target Support Files/Pods-SwiftFlutter/Pods-SwiftFlutter.release.xcconfig"; sourceTree = "<group>"; };
-		65862FFB19638571A3218802 /* libPods-SwiftFlutter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SwiftFlutter.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		91B4FD4CB854EA3C5DE4005F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		DEEE39EED5A58E84714D091C /* Pods_SwiftFlutter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftFlutter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,7 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C87F0B2557C456B8C6BA06F9 /* libPods-SwiftFlutter.a in Frameworks */,
+				85539362D452C76E5E2F3BE6 /* Pods_SwiftFlutter.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,7 +74,7 @@
 		3091EC1D99ECA662DA5E941E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				65862FFB19638571A3218802 /* libPods-SwiftFlutter.a */,
+				DEEE39EED5A58E84714D091C /* Pods_SwiftFlutter.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -96,12 +96,13 @@
 			buildConfigurationList = 18C7E8CC2D85D826004B0ACB /* Build configuration list for PBXNativeTarget "SwiftFlutter" */;
 			buildPhases = (
 				978E5F39C602000B9303EB50 /* [CP] Check Pods Manifest.lock */,
-				2610160191430A3E79DDA4D4 /* [CP-User] Run Flutter Build flutter_module Script */,
+				502BAD57FC668CA5E576BB5C /* [CP-User] Run Flutter Build flutter_module Script */,
 				18C7E8B52D85D825004B0ACB /* Sources */,
 				18C7E8B62D85D825004B0ACB /* Frameworks */,
 				18C7E8B72D85D825004B0ACB /* Resources */,
 				7528242616A4CFFBB34E4BE9 /* [CP] Copy Pods Resources */,
-				F36995A5BBE3DCB2CD0780CD /* [CP-User] Embed Flutter Build flutter_module Script */,
+				7C0A0815C1EBF38A80A18EC5 /* [CP] Embed Pods Frameworks */,
+				908DD522D304FDF321C6CA75 /* [CP-User] Embed Flutter Build flutter_module Script */,
 			);
 			buildRules = (
 			);
@@ -161,7 +162,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2610160191430A3E79DDA4D4 /* [CP-User] Run Flutter Build flutter_module Script */ = {
+		502BAD57FC668CA5E576BB5C /* [CP-User] Run Flutter Build flutter_module Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -196,6 +197,41 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SwiftFlutter/Pods-SwiftFlutter-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		7C0A0815C1EBF38A80A18EC5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SwiftFlutter/Pods-SwiftFlutter-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SwiftFlutter/Pods-SwiftFlutter-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SwiftFlutter/Pods-SwiftFlutter-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		908DD522D304FDF321C6CA75 /* [CP-User] Embed Flutter Build flutter_module Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP-User] Embed Flutter Build flutter_module Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nset -u\nsource \"${SRCROOT}/../../flutter_module/.ios/Flutter/flutter_export_environment.sh\"\nexport VERBOSE_SCRIPT_LOGGING=1 && \"$FLUTTER_ROOT\"/packages/flutter_tools/bin/xcode_backend.sh embed_and_thin";
+		};
 		978E5F39C602000B9303EB50 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -217,20 +253,6 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
-		};
-		F36995A5BBE3DCB2CD0780CD /* [CP-User] Embed Flutter Build flutter_module Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP-User] Embed Flutter Build flutter_module Script";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nset -u\nsource \"${SRCROOT}/../../flutter_module/.ios/Flutter/flutter_export_environment.sh\"\nexport VERBOSE_SCRIPT_LOGGING=1 && \"$FLUTTER_ROOT\"/packages/flutter_tools/bin/xcode_backend.sh embed_and_thin";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -259,7 +281,6 @@
 				INFOPLIST_FILE = SwiftFlutter/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -290,7 +311,6 @@
 				INFOPLIST_FILE = SwiftFlutter/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
