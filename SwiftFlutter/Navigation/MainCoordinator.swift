@@ -65,13 +65,55 @@ class MainCoordinator: Coordinator {
     }
     
     private func createFlutterTabNavController() -> UINavigationController {
-        let flutterViewController = DemoListViewController(demoType: .flutter)
+        // 确保 Flutter 引擎已初始化
+        guard let flutterEngine = DependencyContainer.shared.resolve(FlutterEngineManager.self)?.getEngine(forKey: "main") else {
+            // 如果Flutter引擎不可用，创建一个错误页面
+            let errorViewController = UIViewController()
+            errorViewController.view.backgroundColor = .systemGroupedBackground
+            errorViewController.title = "Flutter"
+            
+            let errorLabel = UILabel()
+            errorLabel.text = "Flutter引擎不可用"
+            errorLabel.textAlignment = .center
+            errorLabel.textColor = .systemRed
+            errorLabel.translatesAutoresizingMaskIntoConstraints = false
+            errorViewController.view.addSubview(errorLabel)
+            
+            NSLayoutConstraint.activate([
+                errorLabel.centerXAnchor.constraint(equalTo: errorViewController.view.centerXAnchor),
+                errorLabel.centerYAnchor.constraint(equalTo: errorViewController.view.centerYAnchor)
+            ])
+            
+            let navController = UINavigationController(rootViewController: errorViewController)
+            return navController
+        }
+        
+        // 直接创建 Flutter 视图控制器
+        let flutterViewController = CustomFlutterViewController(
+            engine: flutterEngine,
+            nibName: nil,
+            bundle: nil
+        )
+        
+        flutterViewController.title = "Flutter"
         let navController = UINavigationController(rootViewController: flutterViewController)
         return navController
     }
 
     private func createReactNativeTabNavController() -> UINavigationController {
-        let reactNativeViewController = DemoListViewController(demoType: .reactNative)
+        // 不在这里初始化bridge，让ReactNativeViewController自己处理
+        // ReactNativeBridgeManager.shared.initializeBridge()
+        
+        // 直接创建 React Native 视图控制器
+        let reactNativeViewController = ReactNativeViewController(
+            moduleName: "SmartHomeApp",
+            initialProps: [
+                "screenType": "demoList",
+                "demoType": "reactNative"
+            ]
+        )
+        
+        reactNativeViewController.title = "React Native"
         let navController = UINavigationController(rootViewController: reactNativeViewController)
         return navController
     }

@@ -8,6 +8,20 @@
 import Foundation
 import React
 
+/// Bridge状态枚举
+enum BridgeState {
+    case notInitialized
+    case initializing
+    case ready
+    case failed(Error)
+    case invalidated
+}
+
+/// Bridge状态变化通知
+extension Notification.Name {
+    static let bridgeStateChanged = Notification.Name("BridgeStateChanged")
+}
+
 /// React Native 桥接管理器
 class ReactNativeBridgeManager: NSObject {
     
@@ -18,26 +32,50 @@ class ReactNativeBridgeManager: NSObject {
     // MARK: - Properties
     
     private var _bridge: RCTBridge?
-    var bridge: RCTBridge? {
-        return _bridge
+    private let bridgeQueue = DispatchQueue(label: "com.swiftflutter.bridge", qos: .userInitiated)
+    private let stateQueue = DispatchQueue(label: "com.swiftflutter.bridge.state", qos: .userInitiated)
+    
+    private var _state: BridgeState = .notInitialized
+    private var state: BridgeState {
+        get {
+            return stateQueue.sync { _state }
+        }
+        set {
+            stateQueue.async { [weak self] in
+                self?._state = newValue
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(
+                        name: .bridgeStateChanged,
+                        object: self,
+                        userInfo: ["state": newValue]
+                    )
+                }
+            }
+        }
     }
     
-    private var isInitialized = false
+    var bridge: RCTBridge? {
+        return bridgeQueue.sync { _bridge }
+    }
     
     // MARK: - Initialization
     
     private override init() {
         super.init()
+        setupBridgeStateObserver()
     }
     
     // MARK: - Public Methods
     
     /// 初始化 React Native 桥接
     func initializeBridge(launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
-        guard !isInitialized else {
-            print("React Native bridge 已经初始化")
+        guard case .notInitialized = state else {
+            print("React Native bridge 已经初始化或正在初始化中，当前状态: \(state)")
             return
         }
+        
+        state = .initializing
+        print("开始初始化 React Native bridge...")
         
         DispatchQueue.main.async { [weak self] in
             self?.setupBridge(launchOptions: launchOptions)
@@ -46,65 +84,129 @@ class ReactNativeBridgeManager: NSObject {
     
     /// 检查桥接是否可用
     func isBridgeReady() -> Bool {
-        return _bridge != nil && isInitialized
+        if case .ready = state {
+            return bridge != nil && bridge?.isValid == true
+        }
+        return false
+    }
+    
+    /// 获取当前bridge状态
+    func getBridgeState() -> BridgeState {
+        return state
     }
     
     /// 重新加载 React Native
     func reloadBridge() {
-        guard let bridge = _bridge else {
-            print("Bridge 未初始化，无法重载")
+        guard isBridgeReady(), let bridge = bridge else {
+            print("Bridge 未就绪，无法重载")
             return
         }
         
+        print("重新加载 React Native bridge...")
         bridge.reload()
-        print("React Native bridge 已重载")
+    }
+    
+    /// 强制重新初始化bridge
+    func forceReinitialize(launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
+        print("强制重新初始化 React Native bridge...")
+        cleanupBridge()
+        
+        // 等待cleanup完成后再重新初始化
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.initializeBridge(launchOptions: launchOptions)
+        }
     }
     
     /// 清理桥接资源
     func cleanupBridge() {
-        _bridge?.invalidate()
-        _bridge = nil
-        isInitialized = false
-        print("React Native bridge 已清理")
+        bridgeQueue.async { [weak self] in
+            guard let self = self else { return }
+            
+            if let bridge = self._bridge {
+                DispatchQueue.main.async {
+                    bridge.invalidate()
+                }
+                self._bridge = nil
+            }
+            
+            DispatchQueue.main.async {
+                self.state = .notInitialized
+                print("React Native bridge 已清理")
+            }
+        }
     }
     
     // MARK: - Private Methods
     
+    private func setupBridgeStateObserver() {
+        // 监听应用生命周期事件
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationWillTerminate),
+            name: UIApplication.willTerminateNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+    
     private func setupBridge(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+        guard case .initializing = state else {
+            print("Bridge状态不正确，无法初始化")
+            return
+        }
+        
+        // 获取bundle URL
+        guard let bundleURL = getBundleURL() else {
+            state = .failed(ReactNativeBridgeError.bundleURLNotFound)
+            return
+        }
+        
         do {
-            // 配置 React Native
-            let bundleURL = getBundleURL()
-            
             // 创建桥接
             let bridge = RCTBridge(delegate: self, launchOptions: launchOptions)
             
             guard let bridge = bridge else {
-                print("创建 RCTBridge 失败")
-                return
+                throw ReactNativeBridgeError.bridgeCreationFailed
             }
             
-            _bridge = bridge
-            isInitialized = true
+            // 验证bridge是否有效
+            guard bridge.isValid else {
+                throw ReactNativeBridgeError.bridgeInvalid
+            }
             
-            print("React Native bridge 初始化成功")
-            print("Bundle URL: \(bundleURL)")
+            bridgeQueue.async { [weak self] in
+                self?._bridge = bridge
+                
+                DispatchQueue.main.async {
+                    self?.state = .ready
+                    print("React Native bridge 初始化成功")
+                    print("Bundle URL: \(bundleURL)")
+                }
+            }
             
         } catch {
-            print("初始化 React Native bridge 失败: \(error)")
+            state = .failed(error)
+            print("React Native bridge 初始化失败: \(error.localizedDescription)")
         }
     }
     
     private func getBundleURL() -> URL? {
         #if DEBUG
             // 开发模式 - 使用 Metro bundler
-            // 使用本机IP地址而非localhost，解决iOS模拟器连接问题
-        var urlString = "localhost"
-        
-#if targetEnvironment(simulator)
-        urlString = "localhost"
-#else
-        urlString = "192.168.2.241"
-#endif
+            var urlString = "localhost"
+            
+            #if targetEnvironment(simulator)
+            urlString = "localhost"
+            #else
+            urlString = "192.168.2.241"
+            #endif
+            
             guard let bundleURL = URL(string: "http://\(urlString):8081/index.bundle?platform=ios&dev=true&minify=false") else {
                 print("无法创建开发模式的 bundle URL")
                 return nil
@@ -118,6 +220,44 @@ class ReactNativeBridgeManager: NSObject {
             }
             return URL(fileURLWithPath: bundlePath)
         #endif
+    }
+    
+    // MARK: - Application Lifecycle
+    
+    @objc private func applicationWillTerminate() {
+        cleanupBridge()
+    }
+    
+    @objc private func applicationDidEnterBackground() {
+        // 在后台时不清理bridge，但可以添加其他逻辑
+        print("应用进入后台，bridge状态: \(state)")
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+        cleanupBridge()
+    }
+}
+
+// MARK: - Bridge Errors
+
+enum ReactNativeBridgeError: Error, LocalizedError {
+    case bundleURLNotFound
+    case bridgeCreationFailed
+    case bridgeInvalid
+    case bridgeNotReady
+    
+    var errorDescription: String? {
+        switch self {
+        case .bundleURLNotFound:
+            return "无法找到Bundle URL"
+        case .bridgeCreationFailed:
+            return "Bridge创建失败"
+        case .bridgeInvalid:
+            return "Bridge无效"
+        case .bridgeNotReady:
+            return "Bridge未就绪"
+        }
     }
 }
 
@@ -133,14 +273,105 @@ extension ReactNativeBridgeManager: RCTBridgeDelegate {
         // 注册额外的原生模块
         var modules: [any RCTBridgeModule] = []
         
-        // 这里可以添加自定义的原生模块
-        // modules.append(MyCustomNativeModule())
+        // 添加自定义的原生模块
+        modules.append(SmartHomeNativeModule())
         
         return modules
     }
     
     func shouldBridgeUseCxxBridge(_ bridge: RCTBridge!) -> Bool {
         return true
+    }
+    
+    // MARK: - Bridge Delegate Callbacks
+    
+    func bridge(_ bridge: RCTBridge, didNotFindModule moduleName: String) {
+        print("Bridge未找到模块: \(moduleName)")
+    }
+    
+    func bridge(_ bridge: RCTBridge, didFailToLoadBundle error: Error) {
+        print("Bridge加载Bundle失败: \(error.localizedDescription)")
+        state = .failed(error)
+    }
+    
+    func bridgeDidFinishLoading(_ bridge: RCTBridge) {
+        print("Bridge加载完成")
+        // 确保状态正确
+        if case .initializing = state {
+            state = .ready
+        }
+    }
+    
+    func bridgeWillReload(_ bridge: RCTBridge) {
+        print("Bridge即将重新加载")
+    }
+    
+    func bridgeDidReload(_ bridge: RCTBridge) {
+        print("Bridge重新加载完成")
+        state = .ready
+    }
+}
+
+// MARK: - Health Check Extension
+
+extension ReactNativeBridgeManager {
+    
+    /// 执行bridge健康检查
+    func performHealthCheck() -> Bool {
+        guard let bridge = bridge else {
+            print("Health Check: Bridge为空")
+            return false
+        }
+        
+        guard bridge.isValid else {
+            print("Health Check: Bridge无效")
+            state = .invalidated
+            return false
+        }
+        
+        guard case .ready = state else {
+            print("Health Check: Bridge状态不正确 - \(state)")
+            return false
+        }
+        
+        // 检查bundle是否加载
+        guard bridge.bundleURL != nil else {
+            print("Health Check: Bundle URL为空")
+            return false
+        }
+        
+        print("Health Check: Bridge健康")
+        return true
+    }
+    
+    /// 启动定期健康检查
+    func startHealthMonitoring() {
+        Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { [weak self] _ in
+            self?.performHealthCheck()
+        }
+    }
+    
+    /// 等待bridge就绪
+    func waitForBridgeReady(timeout: TimeInterval = 10.0, completion: @escaping (Bool) -> Void) {
+        let startTime = Date()
+        
+        func checkReady() {
+            if isBridgeReady() {
+                completion(true)
+                return
+            }
+            
+            if Date().timeIntervalSince(startTime) > timeout {
+                completion(false)
+                return
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                checkReady()
+            }
+        }
+        
+        checkReady()
     }
 }
 

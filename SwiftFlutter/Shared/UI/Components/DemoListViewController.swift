@@ -161,8 +161,8 @@ class DemoListViewController: UIViewController {
     }
     
     private func navigateToReactNative(demo: DemoItem) {
-        // 确保 React Native 桥接已初始化
-        ReactNativeBridgeManager.shared.initializeBridge()
+        // 不在这里初始化bridge，让ReactNativeViewController自己处理
+        // ReactNativeBridgeManager.shared.initializeBridge()
         
         // 创建 React Native 视图控制器
         let reactNativeVC = ReactNativeViewController(
