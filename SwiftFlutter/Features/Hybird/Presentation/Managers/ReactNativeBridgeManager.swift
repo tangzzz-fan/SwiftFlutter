@@ -98,7 +98,14 @@ class ReactNativeBridgeManager: NSObject {
         #if DEBUG
             // 开发模式 - 使用 Metro bundler
             // 使用本机IP地址而非localhost，解决iOS模拟器连接问题
-            guard let bundleURL = URL(string: "http://192.168.2.241:8081/index.bundle?platform=ios&dev=true&minify=false") else {
+        var urlString = "localhost"
+        
+#if targetEnvironment(simulator)
+        urlString = "localhost"
+#else
+        urlString = "192.168.2.241"
+#endif
+            guard let bundleURL = URL(string: "http://\(urlString):8081/index.bundle?platform=ios&dev=true&minify=false") else {
                 print("无法创建开发模式的 bundle URL")
                 return nil
             }
